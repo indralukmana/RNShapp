@@ -1,8 +1,9 @@
 import React from 'react'
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Colors from '../../constants/Colors'
 import CartItem from '../../components/shop/CartItem'
+import * as cartActions from '../../store/actions/cart'
 
 const styles = StyleSheet.create({
     screen: {
@@ -33,6 +34,8 @@ const styles = StyleSheet.create({
 
 const CartScreen = () => {
     const cartTotalAmount = useSelector((state: any) => state.cart.totalAmount)
+
+    const dispatch = useDispatch()
 
     const cartItems = useSelector((state: any) => {
         const transformedCartItems = []
@@ -77,7 +80,9 @@ const CartScreen = () => {
                         quantity={item.quantity}
                         title={item.productTitle}
                         amount={item.sum}
-                        onRemove={() => {}}
+                        onRemove={() =>
+                            dispatch(cartActions.removeFromCart(item.productId))
+                        }
                     />
                 )}
             />
