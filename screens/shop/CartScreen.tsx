@@ -1,7 +1,8 @@
 import React from 'react'
-import { View, Text, Button, StyleSheet } from 'react-native'
+import { View, Text, Button, StyleSheet, FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
 import Colors from '../../constants/Colors'
+import CartItem from '../../components/shop/CartItem'
 
 const styles = StyleSheet.create({
     screen: {
@@ -67,9 +68,19 @@ const CartScreen = () => {
                     onPress={() => {}}
                 />
             </View>
-            <View>
-                <Text>Cart Items</Text>
-            </View>
+
+            <FlatList
+                data={cartItems}
+                keyExtractor={item => item.productId}
+                renderItem={({ item }) => (
+                    <CartItem
+                        quantity={item.quantity}
+                        title={item.productTitle}
+                        amount={item.sum}
+                        onRemove={() => {}}
+                    />
+                )}
+            />
         </View>
     )
 }
