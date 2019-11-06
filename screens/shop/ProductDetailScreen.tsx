@@ -1,8 +1,9 @@
 import React from 'react'
 import { Text, StyleSheet, ScrollView, Image, Button, View } from 'react-native'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Colors from '../../constants/Colors'
+import * as cartActions from '../../store/actions/cart'
 
 const styles = StyleSheet.create({
     image: {
@@ -37,6 +38,8 @@ const ProductDetailScreen: NavigationStackScreenComponent = ({
         ),
     )
 
+    const dispatch = useDispatch()
+
     return (
         <ScrollView>
             <Image
@@ -47,7 +50,9 @@ const ProductDetailScreen: NavigationStackScreenComponent = ({
                 <Button
                     color={Colors.primary}
                     title="Add to Cart"
-                    onPress={() => console.log({ selectedProduct })}
+                    onPress={() =>
+                        dispatch(cartActions.addToCart(selectedProduct))
+                    }
                 />
             </View>
             <Text style={styles.price}>${selectedProduct.price}</Text>

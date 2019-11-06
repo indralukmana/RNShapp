@@ -4,12 +4,18 @@ import { createStore, combineReducers } from 'redux'
 
 import { Provider } from 'react-redux'
 
-import productsReducer from './store/reducer'
+import { composeWithDevTools } from 'redux-devtools-extension'
+
+import productsReducer from './store/reducers/products'
+import cartReducer from './store/reducers/cart'
 import ShopNavigator from './screens/ShopNavigator'
 
-const rootReducer = combineReducers({ products: productsReducer })
+const rootReducer = combineReducers({
+    products: productsReducer,
+    cart: cartReducer,
+})
 
-const store = createStore(rootReducer)
+const store = createStore(rootReducer, composeWithDevTools())
 
 const App = () => {
     return (
