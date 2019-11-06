@@ -40,17 +40,17 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
     )
 }
 
-ProductsOverviewScreen.navigationOptions = {
+ProductsOverviewScreen.navigationOptions = navData => ({
     headerTitle: 'All Products',
     headerRight: (
         <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
             <Item
                 title="cart"
                 iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
-                onPress={() => {}}
+                onPress={() => navData.navigation.navigate('Cart')}
             />
         </HeaderButtons>
     ),
-}
+})
 
 export default ProductsOverviewScreen
