@@ -1,9 +1,30 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { Text, StyleSheet, ScrollView, Image, Button, View } from 'react-native'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { useSelector } from 'react-redux'
+import Colors from '../../constants/Colors'
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    image: {
+        width: '100%',
+        height: 300,
+    },
+    actions: {
+        marginVertical: 10,
+        alignItems: 'center',
+    },
+    price: {
+        fontSize: 20,
+        textAlign: 'center',
+        color: '#888',
+        marginVertical: 20,
+    },
+    description: {
+        fontSize: 14,
+        textAlign: 'center',
+        marginHorizontal: 20,
+    },
+})
 
 const ProductDetailScreen: NavigationStackScreenComponent = ({
     navigation,
@@ -17,9 +38,23 @@ const ProductDetailScreen: NavigationStackScreenComponent = ({
     )
 
     return (
-        <View>
-            <Text>Product Detail Screen {JSON.stringify(selectedProduct)}</Text>
-        </View>
+        <ScrollView>
+            <Image
+                style={styles.image}
+                source={{ uri: selectedProduct.imageUrl }}
+            />
+            <View style={styles.actions}>
+                <Button
+                    color={Colors.primary}
+                    title="Add to Cart"
+                    onPress={() => console.log({ selectedProduct })}
+                />
+            </View>
+            <Text style={styles.price}>${selectedProduct.price}</Text>
+            <Text style={styles.description}>
+                {selectedProduct.description}
+            </Text>
+        </ScrollView>
     )
 }
 
