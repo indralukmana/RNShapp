@@ -2,6 +2,7 @@ import React from 'react'
 import { FlatList, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
+import ProductItem from '../../components/shop/ProductItem'
 
 const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
     const products = useSelector(
@@ -12,7 +13,15 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
         <FlatList
             data={products}
             keyExtractor={(item: any) => item.id}
-            renderItem={({ item }) => <Text>{item.title}</Text>}
+            renderItem={({ item }) => (
+                <ProductItem
+                    title={item.title}
+                    price={item.price}
+                    imageUrl={item.imageUrl}
+                    onAddToCart={() => {}}
+                    onViewDetail={() => {}}
+                />
+            )}
         />
     )
 }
