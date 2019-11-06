@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, Button, StyleSheet, FlatList } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
+import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import Colors from '../../constants/Colors'
 import CartItem from '../../components/shop/CartItem'
 import * as cartActions from '../../store/actions/cart'
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
     },
 })
 
-const CartScreen = () => {
+const CartScreen: NavigationStackScreenComponent = () => {
     const cartTotalAmount = useSelector((state: any) => state.cart.totalAmount)
 
     const dispatch = useDispatch()
@@ -88,11 +89,16 @@ const CartScreen = () => {
                         onRemove={() =>
                             dispatch(cartActions.removeFromCart(item.productId))
                         }
+                        deletable
                     />
                 )}
             />
         </View>
     )
+}
+
+CartScreen.navigationOptions = {
+    headerTitle: 'Cart',
 }
 
 export default CartScreen
