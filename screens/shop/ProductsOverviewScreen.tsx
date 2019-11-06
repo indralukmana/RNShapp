@@ -1,10 +1,12 @@
 import React from 'react'
-import { FlatList, Text } from 'react-native'
+import { FlatList } from 'react-native'
 import { useSelector } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import ProductItem from '../../components/shop/ProductItem'
 
-const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
+const ProductsOverviewScreen: NavigationStackScreenComponent = ({
+    navigation,
+}) => {
     const products = useSelector(
         (state: any) => state.products.availableProducts,
     )
@@ -19,7 +21,12 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = () => {
                     price={item.price}
                     imageUrl={item.imageUrl}
                     onAddToCart={() => {}}
-                    onViewDetail={() => {}}
+                    onViewDetail={() =>
+                        navigation.navigate('ProductDetail', {
+                            productId: item.id,
+                            productTitle: item.title,
+                        })
+                    }
                 />
             )}
         />

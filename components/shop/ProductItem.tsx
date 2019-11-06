@@ -1,5 +1,14 @@
 import React from 'react'
-import { View, Text, StyleSheet, Image, Button } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    Button,
+    TouchableOpacity,
+    Platform,
+    TouchableNativeFeedback,
+} from 'react-native'
 
 const styles = StyleSheet.create({
     product: {
@@ -12,6 +21,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         height: 300,
         margin: 20,
+        overflow: 'hidden',
     },
     imageContainer: {
         width: '100%',
@@ -46,20 +56,33 @@ const styles = StyleSheet.create({
     },
 })
 
+let TouchableComponent: any = TouchableOpacity
+
+if (Platform.OS === 'android' && Platform.Version >= 21) {
+    TouchableComponent = TouchableNativeFeedback
+}
+
 const ProductItem = ({ imageUrl, title, price, onViewDetail, onAddToCart }) => {
     return (
         <View style={styles.product}>
-            <View style={styles.imageContainer}>
-                <Image style={styles.image} source={{ uri: imageUrl }} />
-            </View>
-            <View style={styles.details}>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.price}>${price.toFixed(2)}</Text>
-            </View>
-            <View style={styles.actions}>
-                <Button title="View Details" onPress={onViewDetail} />
-                <Button title="To Cart" onPress={onAddToCart} />
-            </View>
+            <TouchableComponent onPress={onViewDetail} useForeground>
+                <View>
+                    <View style={styles.imageContainer}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: imageUrl }}
+                        />
+                    </View>
+                    <View style={styles.details}>
+                        <Text style={styles.title}>{title}</Text>
+                        <Text style={styles.price}>${price.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.actions}>
+                        <Button title="View Details" onPress={onViewDetail} />
+                        <Button title="To Cart" onPress={onAddToCart} />
+                    </View>
+                </View>
+            </TouchableComponent>
         </View>
     )
 }
