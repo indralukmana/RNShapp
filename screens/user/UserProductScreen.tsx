@@ -7,7 +7,7 @@ import ProductItem from '../../components/shop/ProductItem'
 import CustomHeaderButton from '../../components/UI/HeaderButton'
 import * as productsActions from '../../store/actions/products'
 
-const UserProductScreen: NavigationStackScreenComponent = () => {
+const UserProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
     const userProducts = useSelector(
         (state: any) => state.products.userProducts,
     )
@@ -25,7 +25,14 @@ const UserProductScreen: NavigationStackScreenComponent = () => {
                     price={item.price}
                     onViewDetail={() => {}}
                 >
-                    <Button title="Edit" onPress={() => {}} />
+                    <Button
+                        title="Edit"
+                        onPress={() => {
+                            navigation.navigate('EditProduct', {
+                                productId: item.id,
+                            })
+                        }}
+                    />
                     <Button
                         title="Delete"
                         onPress={() => {
@@ -46,6 +53,17 @@ UserProductScreen.navigationOptions = navData => ({
                 title="Menu"
                 iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
                 onPress={() => navData.navigation.toggleDrawer()}
+            />
+        </HeaderButtons>
+    ),
+    headerRight: (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            <Item
+                title="Menu"
+                iconName={
+                    Platform.OS === 'android' ? 'md-create' : 'ios-create'
+                }
+                onPress={() => navData.navigation.navigate('EditProduct')}
             />
         </HeaderButtons>
     ),
