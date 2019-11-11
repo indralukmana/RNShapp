@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, Platform } from 'react-native'
+import { FlatList, Platform, Button } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
@@ -25,16 +25,29 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
                     title={item.title}
                     price={item.price}
                     imageUrl={item.imageUrl}
-                    onAddToCart={() => {
-                        dispatch(cartActions.addToCart(item))
-                    }}
                     onViewDetail={() =>
                         navigation.navigate('ProductDetail', {
                             productId: item.id,
                             productTitle: item.title,
                         })
                     }
-                />
+                >
+                    <Button
+                        title="View Details"
+                        onPress={() =>
+                            navigation.navigate('ProductDetail', {
+                                productId: item.id,
+                                productTitle: item.title,
+                            })
+                        }
+                    />
+                    <Button
+                        title="To Cart"
+                        onPress={() => {
+                            dispatch(cartActions.addToCart(item))
+                        }}
+                    />
+                </ProductItem>
             )}
         />
     )

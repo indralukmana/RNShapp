@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     Image,
-    Button,
     TouchableOpacity,
     Platform,
     TouchableNativeFeedback,
@@ -62,7 +61,7 @@ if (Platform.OS === 'android' && Platform.Version >= 21) {
     TouchableComponent = TouchableNativeFeedback
 }
 
-const ProductItem = ({ imageUrl, title, price, onViewDetail, onAddToCart }) => {
+const ProductItem = ({ imageUrl, title, price, onViewDetail, children }) => {
     return (
         <View style={styles.product}>
             <TouchableComponent onPress={onViewDetail} useForeground>
@@ -77,10 +76,7 @@ const ProductItem = ({ imageUrl, title, price, onViewDetail, onAddToCart }) => {
                         <Text style={styles.title}>{title}</Text>
                         <Text style={styles.price}>${price.toFixed(2)}</Text>
                     </View>
-                    <View style={styles.actions}>
-                        <Button title="View Details" onPress={onViewDetail} />
-                        <Button title="To Cart" onPress={onAddToCart} />
-                    </View>
+                    <View style={styles.actions}>{children}</View>
                 </View>
             </TouchableComponent>
         </View>
