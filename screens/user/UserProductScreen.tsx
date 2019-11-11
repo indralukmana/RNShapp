@@ -1,15 +1,18 @@
 import React from 'react'
 import { FlatList, Platform, Button } from 'react-native'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import ProductItem from '../../components/shop/ProductItem'
 import CustomHeaderButton from '../../components/UI/HeaderButton'
+import * as productsActions from '../../store/actions/products'
 
 const UserProductScreen: NavigationStackScreenComponent = () => {
     const userProducts = useSelector(
         (state: any) => state.products.userProducts,
     )
+
+    const dispatch = useDispatch()
 
     return (
         <FlatList
@@ -23,7 +26,12 @@ const UserProductScreen: NavigationStackScreenComponent = () => {
                     onViewDetail={() => {}}
                 >
                     <Button title="Edit" onPress={() => {}} />
-                    <Button title="Delete" onPress={() => {}} />
+                    <Button
+                        title="Delete"
+                        onPress={() => {
+                            dispatch(productsActions.deleteProduct(item.id))
+                        }}
+                    />
                 </ProductItem>
             )}
         />
