@@ -9,8 +9,9 @@ import {
 } from 'react-native'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import CustomHeaderButton from '../../components/UI/HeaderButton'
+import * as productsActions from '../../store/actions/products'
 
 const styles = StyleSheet.create({
     form: { margin: 20 },
@@ -28,6 +29,8 @@ const styles = StyleSheet.create({
 })
 
 const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
+    const dispatch = useDispatch()
+
     const productId = navigation.getParam('productId')
     const editedProduct = useSelector(state =>
         state.products.userProducts.find(product => product.id === productId),
@@ -43,8 +46,34 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
     )
 
     const submitHandler = useCallback(() => {
-        console.log('Submit')
-    }, [])
+        if (editedProduct) {
+            dispatch(
+                productsActions.updateProduct(
+                    productId,
+                    title,
+                    description,
+                    imageUrl,
+                ),
+            )
+        } else {
+            dispatch(
+                productsActions.createProduct(
+                    title,
+                    description,
+                    imageUrl,
+                    Number(price),
+                ),
+            )
+        }
+    }, [
+        description,
+        dispatch,
+        editedProduct,
+        imageUrl,
+        price,
+        productId,
+        title,
+    ])
 
     useEffect(() => {
         navigation.setParams({ submit: submitHandler })
