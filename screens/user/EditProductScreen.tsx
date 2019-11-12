@@ -32,7 +32,7 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
     const dispatch = useDispatch()
 
     const productId = navigation.getParam('productId')
-    const editedProduct = useSelector(state =>
+    const editedProduct = useSelector((state: any) =>
         state.products.userProducts.find(product => product.id === productId),
     )
 
