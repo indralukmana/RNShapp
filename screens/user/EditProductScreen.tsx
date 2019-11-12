@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import {
     View,
     Text,
@@ -41,6 +41,15 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
     const [description, setDescription] = useState(
         editedProduct ? editedProduct.description : '',
     )
+
+    const submitHandler = useCallback(() => {
+        console.log('Submit')
+    }, [])
+
+    useEffect(() => {
+        navigation.setParams({ submit: submitHandler })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [submitHandler])
 
     return (
         <ScrollView>
@@ -95,7 +104,7 @@ EditProductScreen.navigationOptions = navData => ({
                 iconName={
                     Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
                 }
-                onPress={() => navData.navigation.toggleDrawer()}
+                onPress={navData.navigation.getParam('submit')}
             />
         </HeaderButtons>
     ),
