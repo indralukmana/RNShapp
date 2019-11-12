@@ -65,6 +65,8 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
                 ),
             )
         }
+        navigation.goBack()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         description,
         dispatch,
