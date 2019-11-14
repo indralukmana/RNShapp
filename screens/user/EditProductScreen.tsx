@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useReducer } from 'react'
 import {
     View,
     Text,
@@ -28,6 +28,40 @@ const styles = StyleSheet.create({
     },
 })
 
+const UPDATE_PRODUCT_FORM = 'UPDATE_PRODUCT_FORM'
+
+const productFormReducer = (state, action) => {
+    switch (action.type) {
+        case UPDATE_PRODUCT_FORM:
+            const updatedInputValues = {
+                ...state.inputValues,
+                [action.input]: action.inputValue,
+            }
+            const updatedInputValidities = {
+                ...state.inputValidities,
+                [action.input]: action.inputValue.length > 0,
+            }
+
+            let formIsValid = true
+            // eslint-disable-next-line no-restricted-syntax
+            for (const key in updatedInputValidities) {
+                // eslint-disable-next-line no-prototype-builtins
+                if (updatedInputValidities.hasOwnProperty(key)) {
+                    formIsValid = formIsValid && updatedInputValidities[key]
+                }
+            }
+
+            return {
+                inputValues: updatedInputValues,
+                inputValidities: updatedInputValidities,
+                formIsValid,
+            }
+
+        default:
+            return state
+    }
+}
+
 const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
     const dispatch = useDispatch()
 
@@ -36,13 +70,23 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
         state.products.userProducts.find(product => product.id === productId),
     )
 
-    const [title, setTitle] = useState(editedProduct ? editedProduct.title : '')
-    const [imageUrl, setImageUrl] = useState(
-        editedProduct ? editedProduct.imageUrl : '',
-    )
-    const [price, setPrice] = useState('')
-    const [description, setDescription] = useState(
-        editedProduct ? editedProduct.description : '',
+    const [productFormState, dispatchProductForm] = useReducer(
+        productFormReducer,
+        {
+            inputValues: {
+                title: editedProduct ? editedProduct.title : '',
+                imageUrl: editedProduct ? editedProduct.imageUrl : '',
+                price: '',
+                description: editedProduct ? editedProduct.description : '',
+            },
+            inputValidities: {
+                title: !!editedProduct,
+                imageUrl: !!editedProduct,
+                price: !!editedProduct,
+                description: !!editedProduct,
+            },
+            formIsValid: !!editedProduct,
+        },
     )
 
     const submitHandler = useCallback(() => {
@@ -50,32 +94,24 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
             dispatch(
                 productsActions.updateProduct(
                     productId,
-                    title,
-                    description,
-                    imageUrl,
+                    productFormState.inputValues.title,
+                    productFormState.inputValues.description,
+                    productFormState.inputValues.imageUrl,
                 ),
             )
         } else {
             dispatch(
                 productsActions.createProduct(
-                    title,
-                    description,
-                    imageUrl,
-                    Number(price),
+                    productFormState.inputValues.title,
+                    productFormState.inputValues.description,
+                    productFormState.inputValues.imageUrl,
+                    Number(productFormState.inputValues.price),
                 ),
             )
         }
         navigation.goBack()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        description,
-        dispatch,
-        editedProduct,
-        imageUrl,
-        price,
-        productId,
-        title,
-    ])
+    }, [editedProduct, dispatch, productId, productFormState])
 
     useEffect(() => {
         navigation.setParams({ submit: submitHandler })
@@ -89,16 +125,29 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
                     <Text style={styles.label}>Title</Text>
                     <TextInput
                         style={styles.input}
-                        value={title}
-                        onChangeText={text => setTitle(text)}
+                        value={productFormState.inputValues.title}
+                        onChangeText={text => {
+                            dispatchProductForm({
+                                type: UPDATE_PRODUCT_FORM,
+                                input: 'title',
+                                inputValue: text,
+                            })
+                        }}
+                        keyboardType="default"
                     />
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Image URL</Text>
                     <TextInput
                         style={styles.input}
-                        value={imageUrl}
-                        onChangeText={text => setImageUrl(text)}
+                        value={productFormState.inputValues.imageUrl}
+                        onChangeText={text =>
+                            dispatchProductForm({
+                                type: UPDATE_PRODUCT_FORM,
+                                input: 'imageUrl',
+                                inputValue: text,
+                            })
+                        }
                     />
                 </View>
                 {!editedProduct && (
@@ -106,8 +155,15 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
                         <Text style={styles.label}>Price</Text>
                         <TextInput
                             style={styles.input}
-                            value={price}
-                            onChangeText={text => setPrice(text)}
+                            value={productFormState.inputValues.price}
+                            onChangeText={text =>
+                                dispatchProductForm({
+                                    type: UPDATE_PRODUCT_FORM,
+                                    input: 'price',
+                                    inputValue: text,
+                                })
+                            }
+                            keyboardType="decimal-pad"
                         />
                     </View>
                 )}
@@ -115,8 +171,14 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
                     <Text style={styles.label}>Description</Text>
                     <TextInput
                         style={styles.input}
-                        value={description}
-                        onChangeText={text => setDescription(text)}
+                        value={productFormState.inputValues.description}
+                        onChangeText={text =>
+                            dispatchProductForm({
+                                type: UPDATE_PRODUCT_FORM,
+                                input: 'description',
+                                inputValue: text,
+                            })
+                        }
                     />
                 </View>
             </View>
