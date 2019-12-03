@@ -49,6 +49,14 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
     }, [dispatch])
 
     useEffect(() => {
+        const willFocusSub = navigation.addListener('willFocus', loadProducts)
+
+        return () => {
+            willFocusSub.remove()
+        }
+    }, [loadProducts, navigation])
+
+    useEffect(() => {
         loadProducts()
     }, [loadProducts])
 
