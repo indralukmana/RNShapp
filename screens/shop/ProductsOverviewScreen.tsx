@@ -1,5 +1,12 @@
-import React, { useEffect } from 'react'
-import { FlatList, Platform, Button } from 'react-native'
+import React, { useEffect, useCallback, useState } from 'react'
+import {
+    FlatList,
+    Platform,
+    Button,
+    ActivityIndicator,
+    StyleSheet,
+    View,
+} from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
@@ -7,19 +14,44 @@ import ProductItem from '../../components/shop/ProductItem'
 import * as cartActions from '../../store/actions/cart'
 import * as productsActions from '../../store/actions/products'
 import CustomHeaderButton from '../../components/UI/HeaderButton'
+import Colors from '../../constants/Colors'
+
+const styles = StyleSheet.create({
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+})
 
 const ProductsOverviewScreen: NavigationStackScreenComponent = ({
     navigation,
 }) => {
+    const [isLoading, setIsLoading] = useState(false)
+
     const products = useSelector(
         (state: any) => state.products.availableProducts,
     )
 
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        dispatch(productsActions.fetchProducts())
+    const loadProducts = useCallback(async () => {
+        setIsLoading(true)
+        await dispatch(productsActions.fetchProducts())
+        setIsLoading(false)
     }, [dispatch])
+
+    useEffect(() => {
+        loadProducts()
+    }, [loadProducts])
+
+    if (isLoading) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+        )
+    }
 
     return (
         <FlatList
