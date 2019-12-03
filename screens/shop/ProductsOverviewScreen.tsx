@@ -60,6 +60,14 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
         )
     }
 
+    if (!isLoading && products.length === 0) {
+        return (
+            <View style={styles.centered}>
+                <Text>There is no product, add some!</Text>
+            </View>
+        )
+    }
+
     if (isLoading) {
         return (
             <View style={styles.centered}>
