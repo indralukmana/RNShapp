@@ -3,6 +3,7 @@ import {
     DELETE_PRODUCT,
     CREATE_PRODUCT,
     UPDATE_PRODUCT,
+    SET_PRODUCTS,
 } from '../actions/products'
 import Product from '../../models/Product'
 
@@ -64,6 +65,14 @@ export default (state = initialState, action) => {
                 ...state,
                 availableProducts: updatedAvailableProducts,
                 userProducts: updatedUserProducts,
+            }
+
+        case SET_PRODUCTS:
+            return {
+                availableProducts: action.products,
+                userProducts: action.products.filter(
+                    (product: Product) => product.ownerId === 'u1',
+                ),
             }
 
         default:

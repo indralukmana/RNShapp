@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FlatList, Platform, Button } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import ProductItem from '../../components/shop/ProductItem'
 import * as cartActions from '../../store/actions/cart'
+import * as productsActions from '../../store/actions/products'
 import CustomHeaderButton from '../../components/UI/HeaderButton'
 
 const ProductsOverviewScreen: NavigationStackScreenComponent = ({
@@ -15,6 +16,10 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
     )
 
     const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(productsActions.fetchProducts())
+    }, [dispatch])
 
     return (
         <FlatList
