@@ -7,32 +7,43 @@ export const SET_PRODUCTS = 'SET_PRODUCTS'
 
 export const fetchProducts = () => {
     return async dispatch => {
-        const response = await fetch(
-            'https://rnshapp.firebaseio.com/products.json',
-        )
-
-        const resData = await response.json()
-
-        const loadedProducts = []
-
-        Object.keys(resData).forEach(key => {
-            const product = resData[key]
-            loadedProducts.push(
-                new Product(
-                    key,
-                    'u1',
-                    product.title,
-                    product.imageUrl,
-                    product.description,
-                    product.price,
-                ),
+        try {
+            const response = await fetch(
+                'https://rnshapp.firebaseio.com/products.json',
             )
-        })
 
-        dispatch({
-            type: SET_PRODUCTS,
-            products: loadedProducts,
-        })
+            if (!response.ok) {
+                throw new Error('response not ok')
+            }
+
+            const resData = await response.json()
+
+            const loadedProducts = []
+
+            Object.keys(resData).forEach(key => {
+                const product = resData[key]
+                loadedProducts.push(
+                    new Product(
+                        key,
+                        'u1',
+                        product.title,
+                        product.imageUrl,
+                        product.description,
+                        product.price,
+                    ),
+                )
+            })
+
+            dispatch({
+                type: SET_PRODUCTS,
+                products: loadedProducts,
+            })
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log(error)
+
+            throw error
+        }
     }
 }
 

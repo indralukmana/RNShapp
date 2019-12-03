@@ -6,6 +6,7 @@ import {
     ActivityIndicator,
     StyleSheet,
     View,
+    Text,
 } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
@@ -28,6 +29,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
     navigation,
 }) => {
     const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState()
 
     const products = useSelector(
         (state: any) => state.products.availableProducts,
@@ -37,13 +39,26 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
 
     const loadProducts = useCallback(async () => {
         setIsLoading(true)
-        await dispatch(productsActions.fetchProducts())
+        try {
+            await dispatch(productsActions.fetchProducts())
+        } catch (err) {
+            setError(err.message)
+        }
         setIsLoading(false)
     }, [dispatch])
 
     useEffect(() => {
         loadProducts()
     }, [loadProducts])
+
+    if (error) {
+        return (
+            <View style={styles.centered}>
+                <Text>There is some errors</Text>
+                <Text>{error}</Text>
+            </View>
+        )
+    }
 
     if (isLoading) {
         return (
