@@ -20,7 +20,7 @@ export const fetchProducts = () => {
 
             const loadedProducts = []
 
-            Object.keys(resData).forEach(key => {
+            Object.keys({ ...resData }).forEach(key => {
                 const product = resData[key]
                 loadedProducts.push(
                     new Product(
