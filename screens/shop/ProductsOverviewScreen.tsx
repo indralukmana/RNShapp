@@ -38,6 +38,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
     const dispatch = useDispatch()
 
     const loadProducts = useCallback(async () => {
+        setError(null)
         setIsLoading(true)
         try {
             await dispatch(productsActions.fetchProducts())
@@ -56,6 +57,7 @@ const ProductsOverviewScreen: NavigationStackScreenComponent = ({
             <View style={styles.centered}>
                 <Text>There is some errors</Text>
                 <Text>{error}</Text>
+                <Button title="Try Again" onPress={loadProducts} />
             </View>
         )
     }
