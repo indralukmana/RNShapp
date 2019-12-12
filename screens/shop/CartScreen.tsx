@@ -1,5 +1,12 @@
-import React from 'react'
-import { View, Text, Button, StyleSheet, FlatList } from 'react-native'
+import React, { useState } from 'react'
+import {
+    View,
+    Text,
+    Button,
+    StyleSheet,
+    FlatList,
+    ActivityIndicator,
+} from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import Colors from '../../constants/Colors'
@@ -35,6 +42,7 @@ const styles = StyleSheet.create({
 })
 
 const CartScreen: NavigationStackScreenComponent = () => {
+    const [isLoading, setIsLoading] = useState(false)
     const cartTotalAmount = useSelector((state: any) => state.cart.totalAmount)
 
     const dispatch = useDispatch()
@@ -58,6 +66,12 @@ const CartScreen: NavigationStackScreenComponent = () => {
         return transformedCartItems
     })
 
+    const handleOrder = async () => {
+        setIsLoading(true)
+        await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount))
+        setIsLoading(false)
+    }
+
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
@@ -67,15 +81,16 @@ const CartScreen: NavigationStackScreenComponent = () => {
                         ${cartTotalAmount.toFixed(2)}
                     </Text>
                 </Text>
-                <Button
-                    title="Order Now"
-                    disabled={cartItems.length === 0}
-                    onPress={() =>
-                        dispatch(
-                            ordersActions.addOrder(cartItems, cartTotalAmount),
-                        )
-                    }
-                />
+                {isLoading && (
+                    <ActivityIndicator size="small" color={Colors.primary} />
+                )}
+                {!isLoading && (
+                    <Button
+                        title="Order Now"
+                        disabled={cartItems.length === 0}
+                        onPress={handleOrder}
+                    />
+                )}
             </View>
 
             <FlatList
