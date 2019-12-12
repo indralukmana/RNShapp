@@ -47,7 +47,15 @@ export const fetchProducts = () => {
     }
 }
 
-export const deleteProduct = productId => ({ type: DELETE_PRODUCT, productId })
+export const deleteProduct = productId => {
+    return async dispatch => {
+        await fetch(
+            `https://rnshapp.firebaseio.com/products/${productId}.json`,
+            { method: 'DELETE' },
+        )
+        dispatch({ type: DELETE_PRODUCT, productId })
+    }
+}
 
 export const createProduct = (title, description, imageUrl, price) => {
     return async dispatch => {
