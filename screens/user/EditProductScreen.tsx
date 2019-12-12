@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer } from 'react'
+import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import {
     View,
     Text,
@@ -6,12 +6,15 @@ import {
     ScrollView,
     TextInput,
     Platform,
+    ActivityIndicator,
+    Alert,
 } from 'react-native'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { HeaderButtons, Item } from 'react-navigation-header-buttons'
 import { useSelector, useDispatch } from 'react-redux'
 import CustomHeaderButton from '../../components/UI/HeaderButton'
 import * as productsActions from '../../store/actions/products'
+import Colors from '../../constants/Colors'
 
 const styles = StyleSheet.create({
     form: { margin: 20 },
@@ -25,6 +28,11 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
+    },
+    centered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 })
 
@@ -63,6 +71,9 @@ const productFormReducer = (state, action) => {
 }
 
 const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState()
+
     const dispatch = useDispatch()
 
     const productId = navigation.getParam('productId')
@@ -89,27 +100,38 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
         },
     )
 
-    const submitHandler = useCallback(() => {
-        if (editedProduct) {
-            dispatch(
-                productsActions.updateProduct(
-                    productId,
-                    productFormState.inputValues.title,
-                    productFormState.inputValues.description,
-                    productFormState.inputValues.imageUrl,
-                ),
-            )
-        } else {
-            dispatch(
-                productsActions.createProduct(
-                    productFormState.inputValues.title,
-                    productFormState.inputValues.description,
-                    productFormState.inputValues.imageUrl,
-                    Number(productFormState.inputValues.price),
-                ),
-            )
+    const submitHandler = useCallback(async () => {
+        setError(null)
+        setIsLoading(true)
+
+        try {
+            if (editedProduct) {
+                await dispatch(
+                    productsActions.updateProduct(
+                        productId,
+                        productFormState.inputValues.title,
+                        productFormState.inputValues.description,
+                        productFormState.inputValues.imageUrl,
+                    ),
+                )
+            } else {
+                await dispatch(
+                    productsActions.createProduct(
+                        productFormState.inputValues.title,
+                        productFormState.inputValues.description,
+                        productFormState.inputValues.imageUrl,
+                        Number(productFormState.inputValues.price),
+                    ),
+                )
+            }
+            navigation.goBack()
+        } catch (err) {
+            setError(err.message)
         }
+
+        setIsLoading(false)
         navigation.goBack()
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editedProduct, dispatch, productId, productFormState])
 
@@ -117,6 +139,20 @@ const EditProductScreen: NavigationStackScreenComponent = ({ navigation }) => {
         navigation.setParams({ submit: submitHandler })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [submitHandler])
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert('An error has occured!', error, [{ text: 'Ok' }])
+        }
+    }, [error])
+
+    if (isLoading) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size="large" color={Colors.primary} />
+            </View>
+        )
+    }
 
     return (
         <ScrollView>
