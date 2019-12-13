@@ -76,7 +76,7 @@ export const addOrder = (cartItems: any[], totalAmount: number) => {
                 id: resData.name,
                 items: cartItems,
                 amount: totalAmount,
-                date,
+                date: new Date(date),
             },
         })
     }

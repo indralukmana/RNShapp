@@ -6,7 +6,9 @@ export const UPDATE_PRODUCT = 'UPDATE_PRODUCT'
 export const SET_PRODUCTS = 'SET_PRODUCTS'
 
 export const fetchProducts = () => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const { userId } = getState().auth
+
         try {
             const response = await fetch(
                 'https://rnshapp.firebaseio.com/products.json',
@@ -25,7 +27,7 @@ export const fetchProducts = () => {
                 loadedProducts.push(
                     new Product(
                         key,
-                        'u1',
+                        product.ownerId,
                         product.title,
                         product.imageUrl,
                         product.description,
@@ -37,6 +39,9 @@ export const fetchProducts = () => {
             dispatch({
                 type: SET_PRODUCTS,
                 products: loadedProducts,
+                userProducts: loadedProducts.filter(
+                    product => product.ownerId === userId,
+                ),
             })
         } catch (error) {
             // eslint-disable-next-line no-console
@@ -66,7 +71,7 @@ export const deleteProduct = productId => {
 
 export const createProduct = (title, description, imageUrl, price) => {
     return async (dispatch, getToken) => {
-        const { token } = getToken().auth
+        const { token, userId } = getToken().auth
 
         const response = await fetch(
             `https://rnshapp.firebaseio.com/products.json?auth=${token}`,
@@ -80,6 +85,7 @@ export const createProduct = (title, description, imageUrl, price) => {
                     description,
                     imageUrl,
                     price,
+                    ownerId: userId,
                 }),
             },
         )
@@ -98,6 +104,7 @@ export const createProduct = (title, description, imageUrl, price) => {
                 description,
                 imageUrl,
                 price,
+                ownerId: userId,
             },
         })
     }
