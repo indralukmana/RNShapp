@@ -12,6 +12,7 @@ import OrdersScreen from './shop/OrdersScreen'
 import UserProductScreen from './user/UserProductScreen'
 import EditProductScreen from './user/EditProductScreen'
 import AuthScreen from './user/AuthScreen'
+import StartupScreen from './StartupScreen'
 
 const defaultStackNavigationOptions = {
     headerStyle: {
@@ -97,6 +98,7 @@ const AuthNavigator = createStackNavigator({
 })
 
 const MainNavigator = createSwitchNavigator({
+    Startup: StartupScreen,
     Auth: AuthNavigator,
     Shop: ShopNavigator,
 })
