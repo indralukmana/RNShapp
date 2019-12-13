@@ -105,6 +105,15 @@ const AuthScreen: NavigationStackScreenComponent = () => {
         )
     }
 
+    const loginHandler = () => {
+        dispatch(
+            authActions.login(
+                formState.inputValues.email,
+                formState.inputValues.password,
+            ),
+        )
+    }
+
     return (
         <View style={styles.screen}>
             <KeyboardAvoidingView
@@ -123,11 +132,7 @@ const AuthScreen: NavigationStackScreenComponent = () => {
                     placeholder="Password"
                 />
                 <View style={styles.button}>
-                    <Button
-                        title="Login"
-                        color="blue"
-                        onPress={() => console.log({ formState })}
-                    />
+                    <Button title="Login" color="blue" onPress={loginHandler} />
                 </View>
                 <View style={styles.button}>
                     <Button
