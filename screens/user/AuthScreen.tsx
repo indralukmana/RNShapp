@@ -72,7 +72,7 @@ const formReducer = (state, action) => {
     }
 }
 
-const AuthScreen: NavigationStackScreenComponent = () => {
+const AuthScreen: NavigationStackScreenComponent = ({ navigation }) => {
     const [loadingStatus, setLoadingStatus] = useState({
         login: false,
         signup: false,
@@ -141,6 +141,7 @@ const AuthScreen: NavigationStackScreenComponent = () => {
                     formState.inputValues.password,
                 ),
             )
+            navigation.navigate('Shop')
         } catch (err) {
             setError(err.message)
         }

@@ -40,10 +40,12 @@ export const signup = (email, password) => {
                 throw new Error(message)
             }
 
-            // const resData = await response.json()
+            const resData = await response.json()
 
             dispatch({
                 type: SIGNUP,
+                token: resData.idToken,
+                userId: resData.localId,
             })
         } catch (error) {
             // eslint-disable-next-line no-console
@@ -91,10 +93,10 @@ export const login = (email, password) => {
 
             const resData = await response.json()
 
-            console.log({ resData })
-
             dispatch({
-                type: SIGNUP,
+                type: LOGIN,
+                token: resData.idToken,
+                userId: resData.localId,
             })
         } catch (error) {
             // eslint-disable-next-line no-console
