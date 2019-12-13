@@ -1,10 +1,11 @@
-import React, { useReducer, useCallback } from 'react'
+import React, { useReducer, useCallback, useState } from 'react'
 import {
     View,
     StyleSheet,
     KeyboardAvoidingView,
     TextInput,
     Button,
+    ActivityIndicator,
 } from 'react-native'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { useDispatch } from 'react-redux'
@@ -71,6 +72,11 @@ const formReducer = (state, action) => {
 }
 
 const AuthScreen: NavigationStackScreenComponent = () => {
+    const [loadingStatus, setLoadingStatus] = useState({
+        login: false,
+        signup: false,
+    })
+
     const dispatch = useDispatch()
 
     const [formState, dispatchForm] = useReducer(formReducer, {
@@ -96,22 +102,26 @@ const AuthScreen: NavigationStackScreenComponent = () => {
         [dispatchForm],
     )
 
-    const signupHandler = () => {
-        dispatch(
+    const signupHandler = async () => {
+        setLoadingStatus({ ...loadingStatus, signup: true })
+        await dispatch(
             authActions.signup(
                 formState.inputValues.email,
                 formState.inputValues.password,
             ),
         )
+        setLoadingStatus({ ...loadingStatus, signup: false })
     }
 
-    const loginHandler = () => {
-        dispatch(
+    const loginHandler = async () => {
+        setLoadingStatus({ ...loadingStatus, login: true })
+        await dispatch(
             authActions.login(
                 formState.inputValues.email,
                 formState.inputValues.password,
             ),
         )
+        setLoadingStatus({ ...loadingStatus, login: false })
     }
 
     return (
@@ -132,14 +142,24 @@ const AuthScreen: NavigationStackScreenComponent = () => {
                     placeholder="Password"
                 />
                 <View style={styles.button}>
-                    <Button title="Login" color="blue" onPress={loginHandler} />
+                    {loadingStatus.login && <ActivityIndicator size="small" />}
+                    {!loadingStatus.login && (
+                        <Button
+                            title="Login"
+                            color="blue"
+                            onPress={loginHandler}
+                        />
+                    )}
                 </View>
                 <View style={styles.button}>
-                    <Button
-                        title="Sign Up"
-                        color="red"
-                        onPress={signupHandler}
-                    />
+                    {loadingStatus.signup && <ActivityIndicator size="small" />}
+                    {!loadingStatus.signup && (
+                        <Button
+                            title="Sign Up"
+                            color="red"
+                            onPress={signupHandler}
+                        />
+                    )}
                 </View>
             </KeyboardAvoidingView>
         </View>
