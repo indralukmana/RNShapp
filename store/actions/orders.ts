@@ -44,10 +44,12 @@ export const fetchOrders = () => {
 }
 
 export const addOrder = (cartItems: any[], totalAmount: number) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const { token } = getState().auth
+
         const date = new Date().toISOString()
         const response = await fetch(
-            'https://rnshapp.firebaseio.com/orders/u1.json',
+            `https://rnshapp.firebaseio.com/orders/u1.json?auth=${token}`,
             {
                 method: 'POST',
                 headers: {
