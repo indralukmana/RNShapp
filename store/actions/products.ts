@@ -48,9 +48,11 @@ export const fetchProducts = () => {
 }
 
 export const deleteProduct = productId => {
-    return async dispatch => {
+    return async (dispatch, getToken) => {
+        const { token } = getToken().auth
+
         const response = await fetch(
-            `https://rnshapp.firebaseio.com/products/${productId}.json`,
+            `https://rnshapp.firebaseio.com/products/${productId}.json?auth=${token}`,
             { method: 'DELETE' },
         )
 
