@@ -1,5 +1,14 @@
+import { AsyncStorage } from 'react-native'
+
 export const SIGNUP = 'SIGNUP'
 export const LOGIN = 'LOGIN'
+
+const saveDataToStorage = (token, userId, expiryDate) => {
+    AsyncStorage.setItem(
+        'userData',
+        JSON.stringify({ token, userId, expiryDate }),
+    )
+}
 
 export const signup = (email, password) => {
     return async dispatch => {
@@ -98,6 +107,16 @@ export const login = (email, password) => {
                 token: resData.idToken,
                 userId: resData.localId,
             })
+
+            const expirationDate = new Date(
+                new Date().getTime() + Number(resData.expiresIn) * 1000,
+            )
+
+            saveDataToStorage(
+                resData.idToken,
+                resData.localId,
+                expirationDate.toISOString(),
+            )
         } catch (error) {
             // eslint-disable-next-line no-console
             console.log(error)
