@@ -54,7 +54,21 @@ export const login = (email, password) => {
             )
 
             if (!response.ok) {
-                throw new Error('Something went wrong!')
+                const errorResData = await response.json()
+                const errorId = errorResData.error.message
+                let message = 'Something went wrong!'
+                if (errorId === 'EMAIL_NOT_FOUND') {
+                    message = 'Email Not Found'
+                } else if (errorId === 'INVALID_PASSWORD') {
+                    message = 'Password is invalid'
+                } else if (errorId === 'MISSING_PASSWORD') {
+                    message = 'Missing Password'
+                } else if (errorId === 'USER_DISABLED') {
+                    message = 'User is disabled by admin'
+                } else if (errorId === 'INVALID_EMAIL') {
+                    message = 'Invalid Email'
+                }
+                throw new Error(message)
             }
 
             const resData = await response.json()
@@ -67,6 +81,8 @@ export const login = (email, password) => {
         } catch (error) {
             // eslint-disable-next-line no-console
             console.log(error)
+
+            throw error
         }
     }
 }

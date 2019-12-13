@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback, useState } from 'react'
+import React, { useReducer, useCallback, useState, useEffect } from 'react'
 import {
     View,
     StyleSheet,
@@ -6,6 +6,7 @@ import {
     TextInput,
     Button,
     ActivityIndicator,
+    Alert,
 } from 'react-native'
 import { NavigationStackScreenComponent } from 'react-navigation-stack'
 import { useDispatch } from 'react-redux'
@@ -77,6 +78,14 @@ const AuthScreen: NavigationStackScreenComponent = () => {
         signup: false,
     })
 
+    const [error, setError] = useState('')
+
+    useEffect(() => {
+        if (error) {
+            Alert.alert('Error', error, [{ text: 'OK' }])
+        }
+    }, [error])
+
     const dispatch = useDispatch()
 
     const [formState, dispatchForm] = useReducer(formReducer, {
@@ -115,12 +124,20 @@ const AuthScreen: NavigationStackScreenComponent = () => {
 
     const loginHandler = async () => {
         setLoadingStatus({ ...loadingStatus, login: true })
-        await dispatch(
-            authActions.login(
-                formState.inputValues.email,
-                formState.inputValues.password,
-            ),
-        )
+        setError(null)
+
+        try {
+            await dispatch(
+                authActions.login(
+                    formState.inputValues.email,
+                    formState.inputValues.password,
+                ),
+            )
+        } catch (err) {
+            console.log({ err })
+            setError(err.message)
+        }
+
         setLoadingStatus({ ...loadingStatus, login: false })
     }
 
