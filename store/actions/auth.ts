@@ -5,8 +5,35 @@ export const LOGIN = 'LOGIN'
 export const AUTHENTICATE = 'AUTHENTICATE'
 export const LOGOUT = 'LOGOUT'
 
-export const authenticate = (userId, token) => {
-    return { type: AUTHENTICATE, userId, token }
+let timer
+
+const clearLogoutTimer = () => {
+    if (timer) {
+        clearTimeout(timer)
+    }
+}
+
+export const logout = () => {
+    return async dispatch => {
+        clearLogoutTimer()
+        AsyncStorage.removeItem('userData')
+        dispatch({ type: LOGOUT })
+    }
+}
+
+const setLogoutTimer = expirationTime => {
+    return dispatch => {
+        timer = setTimeout(() => {
+            dispatch(logout())
+        }, expirationTime / 1000)
+    }
+}
+
+export const authenticate = (userId, token, expiryTime) => {
+    return dispatch => {
+        dispatch(setLogoutTimer(expiryTime))
+        dispatch({ type: AUTHENTICATE, userId, token })
+    }
 }
 
 const saveDataToStorage = (token, userId, expiryDate) => {
@@ -16,12 +43,6 @@ const saveDataToStorage = (token, userId, expiryDate) => {
     )
 }
 
-export const logout = () => {
-    return async dispatch => {
-        await saveDataToStorage(null, null, null)
-        dispatch({ type: LOGOUT })
-    }
-}
 export const signup = (email, password) => {
     return async dispatch => {
         try {
@@ -63,11 +84,13 @@ export const signup = (email, password) => {
 
             const resData = await response.json()
 
-            dispatch({
-                type: SIGNUP,
-                token: resData.idToken,
-                userId: resData.localId,
-            })
+            dispatch(
+                authenticate(
+                    resData.idToken,
+                    resData.localId,
+                    +resData.expiresIn * 1000,
+                ),
+            )
         } catch (error) {
             // eslint-disable-next-line no-console
             console.log(error)
@@ -114,11 +137,13 @@ export const login = (email, password) => {
 
             const resData = await response.json()
 
-            dispatch({
-                type: LOGIN,
-                token: resData.idToken,
-                userId: resData.localId,
-            })
+            dispatch(
+                authenticate(
+                    resData.idToken,
+                    resData.localId,
+                    +resData.expiresIn * 1000,
+                ),
+            )
 
             const expirationDate = new Date(
                 new Date().getTime() + Number(resData.expiresIn) * 1000,

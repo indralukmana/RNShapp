@@ -25,7 +25,10 @@ const StartupScreen: NavigationStackScreenComponent = ({ navigation }) => {
                 return
             }
 
-            dispatch(authActions.authenticate(userId, token))
+            const expirationTime =
+                expirationDate.getTime() - new Date().getTime()
+
+            dispatch(authActions.authenticate(userId, token, expirationTime))
             navigation.navigate('Shop')
         }
 
