@@ -100,9 +100,11 @@ export const createProduct = (title, description, imageUrl, price) => {
 }
 
 export const updateProduct = (id, title, description, imageUrl) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const { token } = getState().auth
+
         const response = await fetch(
-            `https://rnshapp.firebaseio.com/products/${id}.json`,
+            `https://rnshapp.firebaseio.com/products/${id}.json?auth=${token}`,
             {
                 method: 'PATCH',
                 headers: {
