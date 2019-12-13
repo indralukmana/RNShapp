@@ -1,9 +1,17 @@
 import { createStackNavigator } from 'react-navigation-stack'
-import { createDrawerNavigator } from 'react-navigation-drawer'
-import { Platform } from 'react-native'
-import { createAppContainer, createSwitchNavigator } from 'react-navigation'
+import {
+    createDrawerNavigator,
+    DrawerNavigatorItems,
+} from 'react-navigation-drawer'
+import { Platform, View, Button } from 'react-native'
+import {
+    SafeAreaView,
+    createAppContainer,
+    createSwitchNavigator,
+} from 'react-navigation'
 import { Ionicons } from '@expo/vector-icons'
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import ProductsOverviewScreen from './shop/ProductsOverviewScreen'
 import Colors from '../constants/Colors'
 import ProductDetailScreen from './shop/ProductDetailScreen'
@@ -13,6 +21,8 @@ import UserProductScreen from './user/UserProductScreen'
 import EditProductScreen from './user/EditProductScreen'
 import AuthScreen from './user/AuthScreen'
 import StartupScreen from './StartupScreen'
+
+import * as authActions from '../store/actions/auth'
 
 const defaultStackNavigationOptions = {
     headerStyle: {
@@ -80,6 +90,26 @@ const AdminNavigator = createStackNavigator(
     },
 )
 
+const DrawerComponent = props => {
+    const dispatch = useDispatch()
+
+    return (
+        <View style={{ flex: 1 }}>
+            <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+                <DrawerNavigatorItems {...props} />
+                <Button
+                    title="Logout"
+                    color={Colors.primary}
+                    onPress={() => {
+                        dispatch(authActions.logout())
+                        props.navigation.navigate('Auth')
+                    }}
+                />
+            </SafeAreaView>
+        </View>
+    )
+}
+
 const ShopNavigator = createDrawerNavigator(
     {
         Products: ProductsNavigator,
@@ -90,6 +120,8 @@ const ShopNavigator = createDrawerNavigator(
         contentOptions: {
             activeTintColor: Colors.primary,
         },
+
+        contentComponent: props => <DrawerComponent {...props} />,
     },
 )
 

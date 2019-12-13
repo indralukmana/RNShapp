@@ -1,4 +1,4 @@
-import { LOGIN, SIGNUP, AUTHENTICATE } from '../actions/auth'
+import { LOGIN, SIGNUP, AUTHENTICATE, LOGOUT } from '../actions/auth'
 
 interface auth {
     token: string
@@ -28,6 +28,9 @@ export default (state: auth = initialState, action) => {
                 token: action.token,
                 userId: action.userId,
             }
+
+        case LOGOUT:
+            return initialState
 
         default:
             return state
