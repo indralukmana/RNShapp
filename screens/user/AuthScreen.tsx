@@ -113,12 +113,20 @@ const AuthScreen: NavigationStackScreenComponent = () => {
 
     const signupHandler = async () => {
         setLoadingStatus({ ...loadingStatus, signup: true })
-        await dispatch(
-            authActions.signup(
-                formState.inputValues.email,
-                formState.inputValues.password,
-            ),
-        )
+
+        setError(null)
+
+        try {
+            await dispatch(
+                authActions.signup(
+                    formState.inputValues.email,
+                    formState.inputValues.password,
+                ),
+            )
+        } catch (err) {
+            setError(err.message)
+        }
+
         setLoadingStatus({ ...loadingStatus, signup: false })
     }
 
@@ -134,7 +142,6 @@ const AuthScreen: NavigationStackScreenComponent = () => {
                 ),
             )
         } catch (err) {
-            console.log({ err })
             setError(err.message)
         }
 
